@@ -1,32 +1,54 @@
 import 'package:flutter/material.dart';
 
-import '../data.dart';
+import '../models/meal.dart';
 import '../widgets/meal_item.dart';
 
-class CategoryMealsScreen extends StatelessWidget {
+class CategoryMealsScreen extends StatefulWidget {
   static const routeName = '/category-meals';
-  // final String categoryID;
-  // final String categoryTitle;
+  final List<Meal> availableMeals;
 
-  // CategoryMealsScreen(this.categoryID, this.categoryTitle);
+  CategoryMealsScreen(this.availableMeals);
+
+  @override
+  _CategoryMealsScreenState createState() => _CategoryMealsScreenState();
+}
+
+class _CategoryMealsScreenState extends State<CategoryMealsScreen> {
+  void _removeItem(String deleteThisMealID) {
+    setState(() {
+      displayedMeals.removeWhere((meal) => meal.id == deleteThisMealID);
+    });
+  }
+
+  String categoryTitle;
+  List<Meal> displayedMeals;
+  var _loadedInitData = false;
+
+  @override
+  void didChangeDependencies() {
+    if (!_loadedInitData) {
+      final routeArguments =
+          ModalRoute.of(context).settings.arguments as Map<String, String>;
+      categoryTitle = routeArguments['title'];
+      final categoryID = routeArguments['id'];
+      displayedMeals = widget.availableMeals.where((meal) {
+        return meal.categories.contains(categoryID);
+      }).toList();
+      _loadedInitData = true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final routeArguments =
-        ModalRoute.of(context).settings.arguments as Map<String, String>;
-    final categoryTitle = routeArguments['title'];
-    final categoryID = routeArguments['id'];
-    final categoryMeals = DUMMY_MEALS.where((meal) {
-      return meal.categories.contains(categoryID);
-    }).toList();
-
     return Scaffold(
       appBar: AppBar(title: Text(categoryTitle)),
       body: ListView.builder(
           itemBuilder: (context, index) {
-            return MealItem(meal: categoryMeals[index]);
+            return MealItem(
+              meal: displayedMeals[index],
+            );
           },
-          itemCount: categoryMeals.length),
+          itemCount: displayedMeals.length),
     );
   }
 }
