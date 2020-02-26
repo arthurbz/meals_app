@@ -70,6 +70,7 @@ class _MealsAppState extends State<MealsApp> {
         theme: ThemeData(
           primarySwatch: Colors.teal,
           accentColor: Colors.lightGreen,
+          fontFamily: 'RobotoCondensed',
           canvasColor: Color.fromRGBO(255, 245, 250, 1),
           textTheme: ThemeData.dark().textTheme.copyWith(
               body1: TextStyle(color: Color.fromRGBO(30, 35, 55, 1)),
